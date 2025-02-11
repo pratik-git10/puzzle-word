@@ -33,8 +33,9 @@ const SubscribeModal = forwardRef<Ref>((props, ref) => {
       backdropComponent={renderBackdrop}
       snapPoints={snapPoints}
       handleComponent={null}>
-      <View>
-        <Text>Hi</Text>
+      <View style={styles.contentContainer}>
+        <Text style={styles.textStyle}>More Fun Puzzles</Text>
+        <Text style={styles.textStyle}>Coming Soon...</Text>
       </View>
     </BottomSheetModal>
   );
@@ -42,4 +43,16 @@ const SubscribeModal = forwardRef<Ref>((props, ref) => {
 
 export default SubscribeModal;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  contentContainer: {
+    flex: 1,
+    backgroundColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 20,
+  },
+  textStyle: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+});
