@@ -9,6 +9,7 @@ import Icon from "@/assets/images/wordle-icon.svg";
 import { Link } from "expo-router";
 import { format } from "date-fns";
 import { Colors } from "@/constants/Colors";
+import ThemedText from "@/components/ThemedText";
 
 export default function Index() {
   const colorScheme = useColorScheme();
@@ -18,8 +19,10 @@ export default function Index() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Icon width={100} height={100} />
-        <Text style={styles.title}>ShabDa</Text>
-        <Text style={styles.text}>Get 6 Chance to win the ShabDa.</Text>
+        <ThemedText style={styles.title}>ShabDa</ThemedText>
+        <ThemedText style={styles.text}>
+          Get 6 Chance to win the ShabDa
+        </ThemedText>
       </View>
 
       <View style={styles.menu}>
@@ -28,25 +31,26 @@ export default function Index() {
           style={[styles.btn, { backgroundColor: "#000" }]}
           asChild>
           <TouchableOpacity>
-            <Text style={[styles.btnText, styles.primaryText]}>Start Game</Text>
+            <Text style={[styles.btnText, styles.primaryText]}>Start</Text>
           </TouchableOpacity>
         </Link>
-        <Link href="/game" style={styles.btn} asChild>
+
+        <Link href="/" style={styles.btn} asChild>
           <TouchableOpacity>
-            <Text style={styles.btnText}>Login</Text>
+            <ThemedText style={styles.btnText}>Login</ThemedText>
           </TouchableOpacity>
         </Link>
-        <Link href="/game" style={styles.btn} asChild>
+        <Link href="/" style={styles.btn} asChild>
           <TouchableOpacity>
-            <Text style={styles.btnText}>Subscribe</Text>
+            <ThemedText style={styles.btnText}>Subscribe</ThemedText>
           </TouchableOpacity>
         </Link>
       </View>
       <View style={styles.footer}>
-        <Text style={styles.footerDate}>
+        <ThemedText style={styles.footerDate}>
           {format(new Date(), "MMMM d, yyyy")}
-        </Text>
-        <Text>Made with ❤️ from Everyone!</Text>
+        </ThemedText>
+        <ThemedText>Made with ❤️ from Everyone!</ThemedText>
       </View>
     </View>
   );

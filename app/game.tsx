@@ -1,14 +1,20 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 
-const game = () => {
+const GamePage = () => {
   return (
-    <View>
-      <Text>game</Text>
+    <View style={styles.text}>
+      <Text>GamePage</Text>
     </View>
   );
 };
 
-export default game;
+export default GamePage;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  text: {
+    marginTop: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});

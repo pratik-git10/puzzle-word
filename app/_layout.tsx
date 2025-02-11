@@ -40,7 +40,7 @@ export default function RootLayout() {
     return null;
   }
   return (
-    <ThemeProvider value={DarkTheme}>
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
       </Stack>
