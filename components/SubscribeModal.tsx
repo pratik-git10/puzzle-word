@@ -1,13 +1,44 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { forwardRef, useCallback, useMemo } from "react";
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  useBottomSheetModal,
+} from "@gorhom/bottom-sheet";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+export type Ref = BottomSheetModal;
 
-const SubscribeModal = () => {
-  return (
-    <View>
-      <Text>SubscribeModal</Text>
-    </View>
+const SubscribeModal = forwardRef<Ref>((props, ref) => {
+  const snapPoints = useMemo(() => ["90%"], []);
+  const { dismiss } = useBottomSheetModal();
+  const { bottom } = useSafeAreaInsets();
+
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        opacity={0.7}
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        {...props}
+        onPress={dismiss}
+      />
+    ),
+    []
   );
-};
+
+  return (
+    <BottomSheetModal
+      ref={ref}
+      index={0}
+      backdropComponent={renderBackdrop}
+      snapPoints={snapPoints}
+      handleComponent={null}>
+      <View>
+        <Text>Hi</Text>
+      </View>
+    </BottomSheetModal>
+  );
+});
 
 export default SubscribeModal;
 

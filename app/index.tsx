@@ -20,9 +20,12 @@ export default function Index() {
   const textColor = Colors[colorScheme ?? "light"].text;
   const subscribeModalRef = useRef<BottomSheetModal>(null);
 
+  const handlePresentSubscribeModal = () =>
+    subscribeModalRef.current?.present();
+
   return (
     <View style={[styles.container, { backgroundColor }]}>
-      {/* <SubscribeModal ref={subscribeModalRef}/> */}
+      <SubscribeModal ref={subscribeModalRef} />
       <View style={styles.header}>
         <Icon width={100} height={100} />
         <ThemedText style={styles.title}>ShabDa</ThemedText>
@@ -46,11 +49,12 @@ export default function Index() {
             <ThemedText style={styles.btnText}>Login</ThemedText>
           </TouchableOpacity>
         </Link>
-        <Link href="/" style={[styles.btn, { borderColor: textColor }]} asChild>
-          <TouchableOpacity>
-            <ThemedText style={styles.btnText}>Subscribe</ThemedText>
-          </TouchableOpacity>
-        </Link>
+
+        <TouchableOpacity
+          onPress={handlePresentSubscribeModal}
+          style={[styles.btn, { borderColor: textColor }]}>
+          <ThemedText style={styles.btnText}>Subscribe</ThemedText>
+        </TouchableOpacity>
       </View>
       <View style={styles.footer}>
         <Text style={styles.footerDate}>
