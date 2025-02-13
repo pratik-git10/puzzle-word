@@ -32,14 +32,11 @@ if (!publishableKey) {
   );
 }
 
+SplashScreen.preventAutoHideAsync();
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const router = useRouter();
-
-  // ✅ Prevent auto-hiding the splash screen inside useEffect
-  useEffect(() => {
-    SplashScreen.preventAutoHideAsync();
-  }, []);
 
   let [fontsLoaded] = useFonts({
     FrankRuhlLibre_300Light,
@@ -70,25 +67,29 @@ export default function RootLayout() {
             <BottomSheetModalProvider>
               <Stack>
                 <Stack.Screen name="index" options={{ headerShown: false }} />
-                <Stack.Screen
+                {/* <Stack.Screen
                   name="login"
                   options={{
                     presentation: "modal",
+                    headerTitle: "Wordle",
                     headerShadowVisible: false,
-                    headerTitle: "Login",
                     headerLeft: () => (
                       <TouchableOpacity onPress={() => router.back()}>
                         <Ionicons
                           name="close"
                           size={26}
-                          color={
-                            colorScheme === "dark"
-                              ? Colors.dark.gray
-                              : Colors.light.gray
-                          }
+                          color={Colors.light.gray}
                         />
                       </TouchableOpacity>
                     ),
+                  }}
+                /> */}
+                <Stack.Screen
+                  name="game"
+                  options={{
+                    headerBackTitle: "Wordle",
+                    headerTintColor: colorScheme === "dark" ? "#fff" : "#000",
+                    title: "",
                   }}
                 />
               </Stack>

@@ -53,7 +53,7 @@ export default function Index() {
             style={[styles.btn, { borderColor: textColor }]}
             asChild>
             <TouchableOpacity>
-              <ThemedText style={styles.btnText}>Login</ThemedText>
+              <ThemedText style={styles.btnText}>Log in</ThemedText>
             </TouchableOpacity>
           </Link>
         </SignedOut>

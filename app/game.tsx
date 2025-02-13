@@ -4,7 +4,7 @@ import React from "react";
 const GamePage = () => {
   return (
     <View style={styles.text}>
-      <Text>GamePage</Text>
+      <Text>GamePage View</Text>
     </View>
   );
 };
