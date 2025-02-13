@@ -90,6 +90,10 @@ export default function RootLayout() {
                     headerBackTitle: "Wordle",
                     headerTintColor: colorScheme === "dark" ? "#fff" : "#000",
                     title: "",
+                    headerBackTitleStyle: {
+                      fontSize: 26,
+                      fontFamily: "FrankRuhl_500Medium",
+                    },
                   }}
                 />
               </Stack>
