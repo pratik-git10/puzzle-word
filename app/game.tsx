@@ -15,7 +15,7 @@ const Page = () => {
   const router = useRouter();
 
   const [rows, setRows] = useState<string[][]>(
-    new Array(ROWS).fill(new Array(5).fill(""))
+    new Array(ROWS).fill(new Array(5).fill("a"))
   );
   const [curRow, setCurRow] = useState(0);
   const [curCol, setCurCol] = useState(0);
@@ -25,7 +25,7 @@ const Page = () => {
   const [grayLetters, setGrayLetters] = useState<string[]>([]);
 
   const addKey = (key: string) => {
-    console.log("Addkey", addKey);
+    console.log("Addkey", key);
   };
 
   return (
@@ -39,11 +39,29 @@ const Page = () => {
                 size={24}
                 color={textColor}
               />
+              <Ionicons name="podium-outline" size={24} color={textColor} />
+              <Ionicons name="settings-sharp" size={24} color={textColor} />
             </View>
           ),
         }}
       />
-      <OnScreenKeyboard />
+      <View style={styles.gameField}>
+        {rows.map((row, rowIndex) => (
+          <View style={styles.gameFieldRow} key={`row-${rowIndex}`}>
+            {row.map((cell, cellIndex) => (
+              <View style={styles.cell} key={`cell-${rowIndex}-${cellIndex}`}>
+                <Text style={styles.cellText}>{cell}</Text>
+              </View>
+            ))}
+          </View>
+        ))}
+      </View>
+      <OnScreenKeyboard
+        onKeyPressed={addKey}
+        greenLetters={greenLetters}
+        yellowLetters={yellowLetters}
+        grayLetters={grayLetters}
+      />
     </View>
   );
 };
@@ -54,12 +72,31 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingVertical: 40,
-    marginTop: 10,
-    justifyContent: "center",
-    alignItems: "center",
   },
   headerIcon: {
     flexDirection: "row",
     gap: 10,
+  },
+  gameField: {
+    alignItems: "center",
+    gap: 8,
+  },
+  gameFieldRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  cell: {
+    backgroundColor: "#fff",
+    width: 62,
+    height: 62,
+    borderWidth: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 2,
+  },
+  cellText: {
+    fontSize: 30,
+    fontWeight: "bold",
+    textTransform: "uppercase",
   },
 });
