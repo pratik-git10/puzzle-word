@@ -6,13 +6,15 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import Icon from "@/assets/images/wordle-icon.svg";
-import { SignedIn, SignedOut } from "@clerk/clerk-expo";
+import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import * as MailComposer from "expo-mail-composer";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { FIRESTORE_DB } from "@/utils/FirebaseConfig";
 
 const end = () => {
   const { win, word, gameField } = useLocalSearchParams<{
@@ -22,11 +24,47 @@ const end = () => {
   }>();
 
   const router = useRouter();
-  const [userScore, setUserScore] = useState<any>({
-    played: 40,
-    wins: 2,
-    currentstreak: 1,
-  });
+  const { user } = useUser();
+
+  useEffect(() => {
+    if (user) {
+      updateHighscore();
+    }
+  }, [user]);
+
+  const updateHighscore = async () => {
+    console.log("updated score", user);
+    if (!user) return;
+
+    const docRef = doc(FIRESTORE_DB, `highscore/${user.id}`);
+    const docSnap = await getDoc(docRef);
+
+    let newScore = {
+      played: 1,
+      wins: win === "true" ? 1 : 0,
+      lastGame: win === "true" ? "win" : "loss",
+      currentStreak: win === "true" ? 1 : 0,
+    };
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+
+      newScore = {
+        played: data.played + 1,
+        wins: win === "true" ? data.wins + 1 : data.wins,
+        lastGame: win === "true" ? "win" : "loss",
+        currentStreak:
+          win === "true" && data.lastGame === "win"
+            ? data.currentStreak + 1
+            : win === "true"
+            ? 1
+            : 0,
+      };
+    }
+
+    await setDoc(docRef, newScore);
+  };
+  const [userScore, setUserScore] = useState<any>();
 
   // share game logic
   const shareGame = async () => {
@@ -114,15 +152,15 @@ const end = () => {
           <Text style={styles.text}>Stats</Text>
           <View style={styles.stats}>
             <View>
-              <Text style={styles.score}>{userScore.played}</Text>
+              <Text style={styles.score}>{userScore?.played}</Text>
               <Text style={styles.score}>played</Text>
             </View>
             <View>
-              <Text style={styles.score}>{userScore.wins}</Text>
+              <Text style={styles.score}>{userScore?.wins}</Text>
               <Text style={styles.score}>Wins</Text>
             </View>
             <View>
-              <Text style={styles.score}>{userScore.currentstreak}</Text>
+              <Text style={styles.score}>{userScore?.currentstreak}</Text>
               <Text style={styles.score}>Current Streak</Text>
             </View>
           </View>

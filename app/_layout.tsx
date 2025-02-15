@@ -21,8 +21,6 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { ClerkProvider, ClerkLoaded } from "@clerk/clerk-expo";
 import { tokenCache } from "@/utils/cache";
-import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "@/constants/Colors";
 
 // ✅ Ensure the environment variable is checked first
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
