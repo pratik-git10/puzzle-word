@@ -6,6 +6,12 @@ import OnScreenKeyboard from "@/components/OnScreenKeyboard";
 import { Ionicons } from "@expo/vector-icons";
 import { allWords } from "@/utils/allWords";
 import { words } from "@/utils/targetWords";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  ZoomIn,
+} from "react-native-reanimated";
+import { transform } from "@babel/core";
 
 const ROWS = 6;
 
@@ -70,10 +76,12 @@ const Page = () => {
 
     if (currentWord.length < word.length) {
       console.log("Complete the word");
+      shakeRow();
       return;
     }
     if (!allWords.includes(currentWord)) {
       console.log("not a word");
+      shakeRow();
       // return;
     }
     // if (currentWord === word) {
@@ -138,6 +146,19 @@ const Page = () => {
     return Colors.light.gray;
   };
 
+  //Animation
+  const offsetShakes = Array.from({ length: ROWS }, () => useSharedValue(0));
+
+  const rowStyles = Array.from({ length: ROWS }, (_, index) =>
+    useAnimatedStyle(() => {
+      return {
+        transform: [{ translateX: offsetShakes[index].value }],
+      };
+    })
+  );
+
+  const shakeRow = () => {};
+
   return (
     <View style={[styles.container, { backgroundColor }]}>
       <Stack.Screen
@@ -157,9 +178,12 @@ const Page = () => {
       />
       <View style={styles.gameField}>
         {rows.map((row, rowIndex) => (
-          <View style={styles.gameFieldRow} key={`row-${rowIndex}`}>
+          <Animated.View
+            style={[styles.gameFieldRow, rowStyles[rowIndex]]}
+            key={`row-${rowIndex}`}>
             {row.map((cell, cellIndex) => (
-              <View
+              <Animated.View
+                entering={ZoomIn.delay(50 * cellIndex)}
                 style={[
                   styles.cell,
                   {
@@ -177,9 +201,9 @@ const Page = () => {
                   ]}>
                   {cell}
                 </Text>
-              </View>
+              </Animated.View>
             ))}
-          </View>
+          </Animated.View>
         ))}
       </View>
       <OnScreenKeyboard
