@@ -87,7 +87,7 @@ export default function RootLayout() {
                   options={{
                     headerBackTitle: "Wordle",
                     headerTintColor: colorScheme === "dark" ? "#fff" : "#000",
-                    title: "",
+                    title: "Home",
                     headerBackTitleStyle: {
                       fontSize: 26,
                       fontFamily: "FrankRuhl_500Medium",

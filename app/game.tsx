@@ -1,5 +1,5 @@
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Colors } from "@/constants/Colors";
 import { Stack, useRouter } from "expo-router";
 import OnScreenKeyboard from "@/components/OnScreenKeyboard";
@@ -9,6 +9,10 @@ import { words } from "@/utils/targetWords";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
+  withDelay,
+  withRepeat,
+  withSequence,
+  withTiming,
   ZoomIn,
 } from "react-native-reanimated";
 import { transform } from "@babel/core";
@@ -76,17 +80,15 @@ const Page = () => {
 
     if (currentWord.length < word.length) {
       console.log("Complete the word");
-      shakeRow();
+      // shakeRow();
       return;
     }
     if (!allWords.includes(currentWord)) {
       console.log("not a word");
-      shakeRow();
+      // shakeRow();
       // return;
     }
-    // if (currentWord === word) {
-    //   console.log("You Won");
-    // }
+    flipRow();
 
     const newGreen: string[] = [];
     const newYellow: string[] = [];
@@ -117,33 +119,10 @@ const Page = () => {
           `/end?win=false&word=${word}&gameField=${JSON.stringify(rows)}`
         );
       }
-    }, 0);
+    }, 2000);
 
     setCurRow(curRow + 1);
     setCurCol(0);
-  };
-
-  const getCellColor = (cell: string, rowIndex: number, cellIndex: number) => {
-    if (curRow > rowIndex) {
-      if (wordLetters[cellIndex] === cell) {
-        return Colors.light.green;
-      } else if (wordLetters.includes(cell)) {
-        return Colors.light.yellow;
-      } else {
-        return grayColor;
-      }
-    }
-    return "transparent";
-  };
-  const getBorderColor = (
-    cell: string,
-    rowIndex: number,
-    cellIndex: number
-  ) => {
-    if (curRow > rowIndex && cell !== "") {
-      return getCellColor(cell, rowIndex, cellIndex);
-    }
-    return Colors.light.gray;
   };
 
   //Animation
@@ -157,11 +136,119 @@ const Page = () => {
     })
   );
 
-  const shakeRow = () => {};
+  const tileRotates = Array.from({ length: ROWS }, () =>
+    Array.from({ length: 5 }, () => useSharedValue(0))
+  );
+
+  const cellBackgrounds = Array.from({ length: ROWS }, () =>
+    Array.from({ length: 5 }, () => useSharedValue("transparent"))
+  );
+
+  const cellBorders = Array.from({ length: ROWS }, () =>
+    Array.from({ length: 5 }, () => useSharedValue(Colors.light.gray))
+  );
+
+  const tileStyles = Array.from({ length: ROWS }, (_, index) => {
+    return Array.from({ length: 5 }, (_, tileIndex) =>
+      useAnimatedStyle(() => {
+        return {
+          transform: [{ rotateX: `${tileRotates[index][tileIndex].value}deg` }],
+          borderColor: cellBorders[index][tileIndex].value,
+          backgroundColor: cellBackgrounds[index][tileIndex].value,
+        };
+      })
+    );
+  });
+
+  const shakeRow = () => {
+    const TIME = 80;
+    const OFFSET = 10;
+
+    offsetShakes[curRow].value = withSequence(
+      withTiming(-OFFSET, { duration: TIME / 2 }),
+      withRepeat(withTiming(OFFSET, { duration: TIME }), 4, true),
+      withTiming(0, { duration: TIME / 2 })
+    );
+  };
+
+  const setCellColor = (cell: string, rowIndex: number, cellIndex: number) => {
+    if (curRow >= rowIndex) {
+      if (wordLetters[cellIndex] === cell) {
+        cellBackgrounds[rowIndex][cellIndex].value = withDelay(
+          cellIndex * 200,
+          withTiming(Colors.light.green)
+        );
+      } else if (wordLetters.includes(cell)) {
+        cellBackgrounds[rowIndex][cellIndex].value = withDelay(
+          cellIndex * 200,
+          withTiming(Colors.light.yellow)
+        );
+      } else {
+        cellBackgrounds[rowIndex][cellIndex].value = withDelay(
+          cellIndex * 200,
+          withTiming(grayColor)
+        );
+      }
+    } else {
+      cellBackgrounds[rowIndex][cellIndex].value = withTiming("transparent", {
+        duration: 1000,
+      });
+    }
+  };
+
+  const setBorderColor = (
+    cell: string,
+    rowIndex: number,
+    cellIndex: number
+  ) => {
+    if (curRow > rowIndex && cell !== "") {
+      if (wordLetters[cellIndex] === cell) {
+        cellBorders[rowIndex][cellIndex].value = withDelay(
+          cellIndex * 200,
+          withTiming(Colors.light.green)
+        );
+      } else if (wordLetters.includes(cell)) {
+        cellBorders[rowIndex][cellIndex].value = withDelay(
+          cellIndex * 200,
+          withTiming(Colors.light.yellow)
+        );
+      } else {
+        cellBorders[rowIndex][cellIndex].value = withDelay(
+          cellIndex * 200,
+          withTiming(grayColor)
+        );
+      }
+    }
+    return Colors.light.gray;
+  };
+
+  const flipRow = () => {
+    const TIME = 300;
+    const OFFSET = 90;
+
+    tileRotates[curRow].forEach((value, index) => {
+      value.value = withDelay(
+        index * 100,
+        withSequence(
+          withTiming(OFFSET, { duration: TIME }, () => {}),
+          withTiming(0, { duration: TIME })
+        )
+      );
+    });
+  };
+
+  useEffect(() => {
+    if (curRow === 0) return;
+
+    rows[curRow - 1].map((cell, cellIndex) => {
+      setCellColor(cell, curRow - 1, cellIndex);
+      setBorderColor(cell, curRow - 1, cellIndex);
+    });
+  }, [curRow]);
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
-      <Stack.Screen
+      {/* <Stack.Screen
         options={{
           headerRight: () => (
             <View style={styles.headerIcon}>
@@ -175,7 +262,7 @@ const Page = () => {
             </View>
           ),
         }}
-      />
+      /> */}
       <View style={styles.gameField}>
         {rows.map((row, rowIndex) => (
           <Animated.View
@@ -186,10 +273,11 @@ const Page = () => {
                 entering={ZoomIn.delay(50 * cellIndex)}
                 style={[
                   styles.cell,
-                  {
-                    backgroundColor: getCellColor(cell, rowIndex, cellIndex),
-                    borderColor: getBorderColor(cell, rowIndex, cellIndex),
-                  },
+                  // {
+                  //   backgroundColor: getCellColor(cell, rowIndex, cellIndex),
+                  //   borderColor: getBorderColor(cell, rowIndex, cellIndex),
+                  // },
+                  tileStyles[rowIndex][cellIndex],
                 ]}
                 key={`cell-${rowIndex}-${cellIndex}`}>
                 <Text
