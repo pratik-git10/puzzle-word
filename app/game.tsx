@@ -41,7 +41,7 @@ const Page = () => {
   );
 
   const wordLetters = word.split("");
-  console.log(word);
+  // console.log(word);
 
   const colStateRef = useRef(curCol);
   const setCurCol = (col: number) => {
@@ -51,7 +51,7 @@ const Page = () => {
 
   // add Key Function
   const addKey = (key: string) => {
-    console.log("Addkey", key);
+    // console.log("Addkey", key);
     const newRows = [...rows.map((row) => [...row])];
     if (key === "ENTER") {
       checkWord();
@@ -79,12 +79,12 @@ const Page = () => {
     const currentWord = rows[curRow].join("");
 
     if (currentWord.length < word.length) {
-      console.log("Complete the word");
-      // shakeRow();
+      // console.log("Complete the word");
+      shakeRow();
       return;
     }
     if (!allWords.includes(currentWord)) {
-      console.log("not a word");
+      // console.log("not a word");
       // shakeRow();
       // return;
     }
@@ -109,12 +109,12 @@ const Page = () => {
 
     setTimeout(() => {
       if (currentWord === word) {
-        console.log("You won!");
+        // console.log("You won!");
         router.push(
           `/end?win=true&word=${word}&gameField=${JSON.stringify(rows)}`
         );
       } else if (curRow + 1 >= rows.length) {
-        console.log("game over");
+        // console.log("game over");
         router.push(
           `/end?win=false&word=${word}&gameField=${JSON.stringify(rows)}`
         );

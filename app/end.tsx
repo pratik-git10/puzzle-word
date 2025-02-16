@@ -33,7 +33,7 @@ const end = () => {
   }, [user]);
 
   const updateHighscore = async () => {
-    console.log("updated score", user);
+    // console.log("updated score", user);
     if (!user) return;
 
     const docRef = doc(FIRESTORE_DB, `highscore/${user.id}`);
